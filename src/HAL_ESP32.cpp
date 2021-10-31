@@ -235,12 +235,13 @@ void HAL_ESP32::ConfigureI2C(void (*TCA6408Interrupt)(void), void (*TCA9534AInte
     //ESP32 = I2C0-SDA / I2C0-SCL
     //I2C Bus 1: uses GPIO 27 (SDA) and GPIO 26 (SCL);
     //I2C Bus 2: uses GPIO 33 (SDA) and GPIO 32 (SCL);
+    // Ollis I2C bus:  GPIO 33 (SDA) and GPIO 36 (SCL);
 
     // Initialize
     i2c_config_t conf;
     conf.mode = I2C_MODE_MASTER;
-    conf.sda_io_num = gpio_num_t::GPIO_NUM_21;   //27;
-    conf.scl_io_num = gpio_num_t::GPIO_NUM_22;      //26;
+    conf.sda_io_num = gpio_num_t::GPIO_NUM_21;      //21;   //27;
+    conf.scl_io_num = gpio_num_t::GPIO_NUM_22;      //22;      //26;
     conf.sda_pullup_en = GPIO_PULLUP_DISABLE;
     conf.scl_pullup_en = GPIO_PULLUP_DISABLE;
     //conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
