@@ -4,8 +4,8 @@
 
 bool PacketReceiveProcessor::HasCommsTimedOut()
 {
-  //We timeout the comms if we don't receive a packet within 3 times the normal
-  //round trip time of the packets through the modules (minimum of 10 seconds to cater for low numbers of modules)
+  // We timeout the comms if we don't receive a packet within 3 times the normal
+  // round trip time of the packets through the modules (minimum of 10 seconds to cater for low numbers of modules)
   uint32_t millisecondSinceLastPacket = millis() - packetLastReceivedMillisecond;
   return ((millisecondSinceLastPacket > 5 * packetTimerMillisecond) && (millisecondSinceLastPacket > 10000));
 }
@@ -14,7 +14,7 @@ bool PacketReceiveProcessor::ProcessReply(PacketStruct *receivebuffer)
 {
   packetsReceived++;
 
-  //TODO: VALIDATE REPLY START/END RANGES ARE VALID TO AVOID MEMORY BUFFER OVERRUNS
+  // TODO: VALIDATE REPLY START/END RANGES ARE VALID TO AVOID MEMORY BUFFER OVERRUNS
 
   // Copy to our buffer (probably don't need to do this), just use pointer instead
   memcpy(&_packetbuffer, receivebuffer, sizeof(_packetbuffer));
@@ -24,12 +24,12 @@ bool PacketReceiveProcessor::ProcessReply(PacketStruct *receivebuffer)
 
   if (validateCRC == _packetbuffer.crc)
   {
-    //Its a valid packet...
+    // Its a valid packet...
     packetLastReceivedMillisecond = millis();
 
     totalModulesFound = _packetbuffer.hops;
 
-    //Careful of overflowing the uint16_t in sequence
+    // Careful of overflowing the uint16_t in sequence
     if (packetLastReceivedSequence > 0 && _packetbuffer.sequence > 0 && _packetbuffer.sequence != packetLastReceivedSequence + 1)
     {
       SERIAL_DEBUG.println();
@@ -42,10 +42,10 @@ bool PacketReceiveProcessor::ProcessReply(PacketStruct *receivebuffer)
 
     packetLastReceivedSequence = _packetbuffer.sequence;
 
-    if (ReplyWasProcessedByAM1odule())
+    if (ReplyWasProcessedByAModule())
     {
-      ESP_LOGD(TAG, "Hops %u,  start %u end %u", _packetbuffer.hops, _packetbuffer.start_address, _packetbuffer.end_address);
-      ESP_LOGD(TAG, "Packet was processed by modul !");
+      // ESP_LOGD(TAG, "Hops %u,  start %u end %u", _packetbuffer.hops, _packetbuffer.start_address, _packetbuffer.end_address);
+      // ESP_LOGD(TAG, "Packet was processed by modul !");
 
       switch (ReplyForCommand())
       {
@@ -54,16 +54,16 @@ bool PacketReceiveProcessor::ProcessReply(PacketStruct *receivebuffer)
 
       case COMMAND::Timing:
       {
-        //uint32_t tnow = millis();
+        // uint32_t tnow = millis();
         uint32_t tnow = (_packetbuffer.moduledata[2] << 16) + _packetbuffer.moduledata[3];
         uint32_t tprevious = (_packetbuffer.moduledata[0] << 16) + _packetbuffer.moduledata[1];
 
-        //Check millis time hasn't rolled over
+        // Check millis time hasn't rolled over
         if (tnow > tprevious)
         {
           packetTimerMillisecond = tnow - tprevious;
         }
-
+        // ESP_LOGD(TAG, "Packet was processed Timing !");
         break;
       }
       case COMMAND::ReadVoltageAndStatus:
@@ -73,9 +73,9 @@ bool PacketReceiveProcessor::ProcessReply(PacketStruct *receivebuffer)
 
         if (_packetbuffer.end_address == _packetbuffer.hops - 1)
         {
-          //We have just processed a voltage reading for the entire chain of modules (all banks)
-          //at this point we should update any display or rules logic
-          //as we have a clean snapshot of voltages and statues
+          // We have just processed a voltage reading for the entire chain of modules (all banks)
+          // at this point we should update any display or rules logic
+          // as we have a clean snapshot of voltages and statues
 
           if (voltageandstatussnapshot_task_handle != NULL)
           {
@@ -85,28 +85,35 @@ bool PacketReceiveProcessor::ProcessReply(PacketStruct *receivebuffer)
         break;
 
       case COMMAND::ReadBadPacketCounter:
+        // ESP_LOGD(TAG, "Packet was processed by ReadBadPacketCount !");
         ProcessReplyBadPacketCount();
         break;
 
       case COMMAND::Identify:
+        // ESP_LOGD(TAG, "Packet was processed by Identify !");
         break; // Ignore reply
 
       case COMMAND::ReadTemperature:
+        // ESP_LOGD(TAG, "Packet was processed by ReadTemperature !");
         ProcessReplyTemperature();
         break;
 
       case COMMAND::ReadSettings:
+        // ESP_LOGD(TAG, "Packet was processed by ReadSettings !");
         ProcessReplySettings();
         break;
 
       case COMMAND::ReadBalancePowerPWM:
+        // ESP_LOGD(TAG, "Packet was processed by ReadBalancePower !");
         ProcessReplyBalancePower();
         break;
 
       case COMMAND::ReadBalanceCurrentCounter:
+        // ESP_LOGD(TAG, "Packet was processed by ReadBalanceCurrentCounter !");
         ProcessReplyReadBalanceCurrentCounter();
         break;
       case COMMAND::ReadPacketReceivedCounter:
+        // ESP_LOGD(TAG, "Packet was processed by ReadPacketReceivedCounter !");
         ProcessReplyReadPacketReceivedCounter();
         break;
       }
@@ -118,7 +125,7 @@ bool PacketReceiveProcessor::ProcessReply(PacketStruct *receivebuffer)
     }
     else
     {
-      //Error count for a request that was not processed by any module in the string
+      // Error count for a request that was not processed by any module in the string
       totalNotProcessedErrors++;
 #if defined(PACKET_LOGGING_RECEIVE)
       SERIAL_DEBUG.println(F("*IGNORE*"));
@@ -127,7 +134,7 @@ bool PacketReceiveProcessor::ProcessReply(PacketStruct *receivebuffer)
   }
   else
   {
-    //crc error
+    // crc error
     totalCRCErrors++;
 #if defined(PACKET_LOGGING_RECEIVE)
     SERIAL_DEBUG.println(F("*CRC Error*"));
@@ -145,7 +152,7 @@ void PacketReceiveProcessor::ProcessReplyBadPacketCount()
   {
     cmi[i].badPacketCount = _packetbuffer.moduledata[q];
     q++;
-    SERIAL_DEBUG.println(F("badPacketCount increased !"));
+    // SERIAL_DEBUG.println(F("badPacketCount increased !"));
   }
 }
 
@@ -160,7 +167,7 @@ void PacketReceiveProcessor::ProcessReplyTemperature()
     cmi[i].internalTemp = ((_packetbuffer.moduledata[q] & 0xFF00) >> 8) - 40;
     cmi[i].externalTemp = (_packetbuffer.moduledata[q] & 0x00FF) - 40;
     q++;
-    SERIAL_DEBUG.println(F("Packet received for temperature !"));
+    // SERIAL_DEBUG.println(F("Packet received for temperature !"));
   }
 }
 
@@ -228,7 +235,7 @@ void PacketReceiveProcessor::ProcessReplyVoltage()
     if (cellptr->voltagemV > 0)
     {
       cellptr->valid = true;
-      SERIAL_DEBUG.println(F("Packet received for voltage > 0 !"));
+      // SERIAL_DEBUG.println(F("Packet received for voltage > 0 !"));
     }
   }
 }

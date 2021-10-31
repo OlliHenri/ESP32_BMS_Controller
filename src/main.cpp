@@ -417,7 +417,7 @@ void sdcardlog_task(void *param)
         //Month is 0 to 11 based!
         timeinfo.tm_mon++;
 
-        //ESP_LOGD(TAG, "%04u-%02u-%02u %02u:%02u:%02u", timeinfo.tm_year, timeinfo.tm_mon, timeinfo.tm_mday, timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
+        ESP_LOGD(TAG, "%04u-%02u-%02u %02u:%02u:%02u", timeinfo.tm_year, timeinfo.tm_mon, timeinfo.tm_mday, timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 
         char filename[32];
         sprintf(filename, "/data_%04u%02u%02u.csv", timeinfo.tm_year, timeinfo.tm_mon, timeinfo.tm_mday);
@@ -797,7 +797,8 @@ void tca9534_isr_task(void *param)
     //Emergency Stop (J1) has triggered
     if (InputState[6] == enumInputState::INPUT_LOW)
     {
-      emergencyStop = true;
+      //emergencyStop = true; // test disabled
+      emergencyStop = false;
     }
 
     if (InputState[4] == enumInputState::INPUT_LOW)
@@ -992,13 +993,13 @@ void replyqueue_task(void *param)
 
 #if defined(PACKET_LOGGING_RECEIVE)
 // Process decoded incoming packet
-//dumpPacketToDebug('R', &ps);
+// dumpPacketToDebug('R', &ps);  // activated as test
 #endif
 
       if (!receiveProc.ProcessReply(&ps))
       {
         //Error blue
-        LED(RGBLED::Blue);
+        // LED(RGBLED::Blue);   // test deactivated no LED
 
         ESP_LOGE(TAG, "Packet Failed");
 
@@ -1026,7 +1027,7 @@ void onPacketReceived()
   PacketStruct ps;
   memcpy(&ps, SerialPacketReceiveBuffer, sizeof(PacketStruct));
 
-  ESP_LOGD(TAG, "Olli onPacketReceived task for Serial DATA.....");
+  // ESP_LOGD(TAG, "Olli onPacketReceived task for Serial DATA.....");
 
   if ((ps.command & 0x0F) == COMMAND::Timing)
   {
@@ -1036,14 +1037,14 @@ void onPacketReceived()
     ps.moduledata[3] = t & 0x0000FFFF;
     //Ensure CRC is correct
     ps.crc = CRC16::CalculateArray((uint8_t *)&ps, sizeof(PacketStruct) - 2);
-    ESP_LOGD(TAG, "Olli onPacketReceived receiverd modul COMMAND Serial DATA.....");
+    //ESP_LOGD(TAG, "Olli onPacketReceived receiverd modul COMMAND Serial DATA.....");
   }
 
   if (!replyQueue.push(&ps))
   {
     ESP_LOGE(TAG, "*Failed to queue reply*");
-  } else
-  ESP_LOGD(TAG, "Olli onPacketReceived push to queue receive modul DATA.....");
+  } 
+  
 }
 
 void transmit_task(void *param)
@@ -1052,8 +1053,6 @@ void transmit_task(void *param)
   {
     //Delay 1 second
     vTaskDelay(pdMS_TO_TICKS(1000));
-
-    
 
     //TODO: Move to proper RTOS QUEUE...
     if (requestQueue.isEmpty() == false)
@@ -1078,11 +1077,11 @@ void transmit_task(void *param)
       transmitBuffer.crc = CRC16::CalculateArray((uint8_t *)&transmitBuffer, sizeof(PacketStruct) - 2);
       myPacketSerial.sendBuffer((byte *)&transmitBuffer);
 
-      ESP_LOGD(TAG, "Olli transmit task for Serial DATA.....");
+      //ESP_LOGD(TAG, "Olli transmit task send Buffer DATA.....");
 
       // Output the packet we just transmitted to debug console
-      //#if defined(PACKET_LOGGING_SEND)
-      //      dumpPacketToDebug('S', &transmitBuffer);
+      //#if defined(PACKET_LOGGING_SEND)        // active as test
+            // dumpPacketToDebug('S', &transmitBuffer);
       //#endif
     }
   }
@@ -1353,9 +1352,9 @@ void enqueue_task(void *param)
     //slower stops the queues from overflowing when a lot of cells are being monitored
     vTaskDelay(pdMS_TO_TICKS((TotalNumberOfCells() <= maximum_cell_modules_per_packet) ? 5000 : 10000));
 
-    LED(RGBLED::Green);
+    // LED(RGBLED::Green);   //test no LED
     //Fire task to switch off LED in a few ms
-    xTaskNotify(ledoff_task_handle, 0x00, eNotifyAction::eNoAction);
+    // xTaskNotify(ledoff_task_handle, 0x00, eNotifyAction::eNoAction);
 
     uint16_t i = 0;
     uint16_t max = TotalNumberOfCells();
@@ -1371,7 +1370,7 @@ void enqueue_task(void *param)
       {
         endmodule = max - 1;
       }
-
+      //ESP_LOGD(TAG, "Olli enqueue?task will send CellVoltageRequest now.....");
       //Need to watch overflow of the uint8 here...
       prg.sendCellVoltageRequest(startmodule, endmodule);
       prg.sendCellTemperatureRequest(startmodule, endmodule);
@@ -3295,7 +3294,7 @@ void setup()
   SERIAL_DEBUG.setDebugOutput(true);
 
   SERIAL_DEBUG.println(diybms_logo);
-  SERIAL_DEBUG.println("Olli printed diybms logo....");
+  //SERIAL_DEBUG.println("Olli printed diybms logo....");
 
   ESP_LOGI(TAG, "CONTROLLER - ver:%s compiled %s", GIT_VERSION, COMPILE_DATE_TIME);
 
@@ -3304,7 +3303,7 @@ void setup()
 
   ESP_LOGI(TAG, "ESP32 Chip model = %u, Rev %u, Cores=%u, Features=%u", chip_info.model, chip_info.revision, chip_info.cores, chip_info.features);
 
-  ESP_LOGD(TAG, "Olli printed chip details....");
+  //ESP_LOGD(TAG, "Olli printed chip details....");
 
   hal.ConfigurePins(WifiPasswordClear);
    
@@ -3410,7 +3409,7 @@ void setup()
   xTaskCreate(lazy_tasks, "lazyt", 2048, nullptr, 1, &lazy_task_handle);
   xTaskCreate(pulse_relay_off_task, "pulse", 2048, nullptr, configMAX_PRIORITIES - 1, &pulse_relay_off_task_handle);
 
-ESP_LOGD(TAG, "Olli at xTask in SetUp()...");
+  //ESP_LOGD(TAG, "Olli at xTask in SetUp()...");
 
   //Set relay defaults
   for (int8_t y = 0; y < RELAY_TOTAL; y++)
@@ -3482,7 +3481,8 @@ ESP_LOGD(TAG, "Olli at xTask in SetUp()...");
 
     connectToMqtt();
 
-    // test deactivated  xTaskCreate(enqueue_task, "enqueue", 1024, nullptr, configMAX_PRIORITIES / 2, &enqueue_task_handle);
+    // test deactivated  
+    xTaskCreate(enqueue_task, "enqueue", 1024, nullptr, configMAX_PRIORITIES / 2, &enqueue_task_handle);
     xTaskCreate(rules_task, "rules", 2048, nullptr, configMAX_PRIORITIES - 5, &rule_task_handle);
     xTaskCreate(influxdb_task, "influxdb", 6000, nullptr, 1, &influxdb_task_handle);
 
