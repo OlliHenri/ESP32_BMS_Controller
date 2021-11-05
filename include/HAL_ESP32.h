@@ -19,18 +19,31 @@ PCB WITH RS485/CANBUS/TFT DISPLAY
 #ifndef HAL_ESP32_H_
 #define HAL_ESP32_H_
 
+// we need to change from TCA9534 and TCA6408 code to PCF8574 code to access our i2c portexpanders. we don´t have TCA6408 and TCA9534!
 // GPIO34 (input only pin)
 #define TCA9534A_INTERRUPT_PIN GPIO_NUM_34
-#define TCA9534APWR_ADDRESS 0x20 // 0x38
+#define TCA9534APWR_ADDRESS 0x38      // does not exist not on our board
 #define TCA9534APWR_INPUT 0x00
 #define TCA9534APWR_OUTPUT 0x01
 #define TCA9534APWR_POLARITY_INVERSION 0x02
 #define TCA9534APWR_CONFIGURATION 0x03
 #define TCA9534APWR_INPUTMASK B10010000
 
+// PCF8574A
+// i2c address 0x20 is the PCF8574A chip on the left center of my board, connected to all output relays and output MOSFETS
+#define PCF8574A_INTERRUPT_PIN GPIO_NUM_34
+#define PCF8574A_ADDRESS 0x20
+#define PCF8574A_INPUTMASK B10000000    // input mask, pin 7 is input to interrupt from PCF8574B all other pins are outputs
+
+// PCF8574B
+// i2c address 0x25 is the PCF8574B chip on the lower edge of my board, intended for input and to controll a bistable relay
+#define PCF8574B_INTERRUPT_PIN GPIO_NUM_34
+#define PCF8574B_ADDRESS 0x25
+#define PCF8574B_INPUTMASK B00111111    // pin6 + 7 control bistable relay the rest can be used as input
+
 // GPIO39 (input only pin)
 #define TCA6408_INTERRUPT_PIN GPIO_NUM_34
-#define TCA6408_ADDRESS 0x20
+#define TCA6408_ADDRESS 0x27    // does not exist not on our board
 #define TCA6408_INPUT 0x00
 #define TCA6408_OUTPUT 0x01
 #define TCA6408_POLARITY_INVERSION 0x02
@@ -70,10 +83,10 @@ public:
         RS485Mutex = xSemaphoreCreateMutex();
     }
 
-    void ConfigureI2C(void (*TCA6408Interrupt)(void), void (*TCA9534AInterrupt)(void));
+    void ConfigureI2C(void (*PCF8574AInterrupt)(void), void (*PCF8574BInterrupt)(void));
     void SetOutputState(uint8_t outputId, RelayState state);
-    uint8_t ReadTCA6408InputRegisters();
-    uint8_t ReadTCA9534InputRegisters();
+    uint8_t ReadPCF8574AInputRegisters();
+    uint8_t ReadPCF8574BInputRegisters();
 
     void Led(uint8_t bits);
     void ConfigurePins(void (*WiFiPasswordResetInterrput)(void));
@@ -312,9 +325,9 @@ public:
         vspi.setFrequency(10000000);
     }
 
-    uint8_t LastTCA6408Value()
+    uint8_t LastPCF8574AValue()
     {
-        return TCA6408_Value;
+        return PCF8574A_Value;
     }
 
 private:
@@ -323,13 +336,17 @@ private:
     SemaphoreHandle_t xi2cMutex = NULL;
     SemaphoreHandle_t RS485Mutex = NULL;
 
-    // Copy of pin state for TCA9534
-    uint8_t TCA9534APWR_Value;
-    // Copy of pin state for TCA6408
-    uint8_t TCA6408_Value;
+    // Copy of pin state for PCF8574A
+    uint8_t PCF8574A_Value;
+    // Copy of pin state for PCF8574B
+    uint8_t PCF8574B_Value;
 
+    esp_err_t test4PCF8574(i2c_port_t i2c_num, uint8_t dev);
+    esp_err_t writeBytePCF8574(i2c_port_t i2c_num, uint8_t dev, uint8_t data);
     esp_err_t writeByte(i2c_port_t i2c_num, uint8_t dev, uint8_t reg, uint8_t data);
+    uint8_t readBytePCF8574(i2c_port_t i2c_num, uint8_t dev);
     uint8_t readByte(i2c_port_t i2c_num, uint8_t dev, uint8_t reg);
+
 };
 
 #endif
