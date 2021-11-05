@@ -939,7 +939,7 @@ $(function () {
 
     //Populate all the setting rules with relay select lists
     $.each($(".settings table tbody tr td:empty"), function (index, value) {
-        $.each([1, 2, 3, 4], function (index1, relay) {
+        $.each([1, 2, 3, 4, 5, 6, 7], function (index1, relay) {
             $(value).append('<select id="rule' + (index) + 'relay' + relay + '" name="rule' + (index) + 'relay' + relay + '"><option>On</option><option>Off</option><option>X</option></select>');
         });
     }

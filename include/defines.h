@@ -94,7 +94,7 @@ enum RelayType : uint8_t
 #define RELAY_RULES 15
 
 // Number of relays on board (4)
-#define RELAY_TOTAL 4
+#define RELAY_TOTAL 7
 
 // 7 inputs on board
 #define INPUTS_TOTAL 7
