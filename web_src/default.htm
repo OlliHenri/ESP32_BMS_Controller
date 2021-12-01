@@ -111,7 +111,7 @@
             <div id="uptime" class="stat"><span class="x t">Uptime:</span><span class="x v"></span></div>
 
             <div id="cansent" class="stat"><span class="x t">CAN sent:</span><span class="x v"></span></div>
-            <div id="canrecd" class="stat"><span class="x t">CAN received:</span><span class="x v"></span></div>
+            <div id="canrecd" class="stat"><span class="x t">CAN received:</span><span class="x v"></span></div> 
 
             <div id="graphOptions" class="stat"><span class="x t">Graph:</span>
                 <span class="x v">
@@ -941,9 +941,17 @@
             <p id="b9">Time is set via NTP, if your controller is not connected to the Internet. Time based rules will
                 be
                 incorrect. This does not automatically correct for daylight saving.</p>
-            <p id="b10">Time now is <span id="timenow"></span></p>
+            <p id="b10">Time now is :<span id="timenow"></span></p>
             <form id="ntpForm" method="POST" action="saventp.json" autocomplete="off">
                 <div class="settings">
+                    <div>
+                        <label for="setDate">set date:</label>
+                        <input type="date" id="setDate" name="setDate" value="2021-07-22" min="2010-01-01" max="2058-12-31">
+                    </div>
+                    <div>
+                        <label for="setTime">set time:</label>
+                        <input type="time" id="setTime" name="setTime" required>
+                    </div>
                     <div>
                         <label for="NTPServer">NTP Server</label>
                         <input type="input" name="NTPServer" id="NTPServer" value="" required="" maxlength="64">

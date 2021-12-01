@@ -20,8 +20,8 @@ uint8_t HAL_ESP32::readBytePCF8574(i2c_port_t i2c_num, uint8_t dev)
         i2c_master_stop(cmd);
         // ESP_ERROR_CHECK_WITHOUT_ABORT(i2c_master_cmd_begin(i2c_num, cmd, pdMS_TO_TICKS(300)));
         esp_err_t ret = i2c_master_cmd_begin(i2c_num, cmd, pdMS_TO_TICKS(100));
-        //ESP_LOGD(TAG, "I2C read PCF8574 reply %i", ret);
-        //ESP_LOGD(TAG, "I2C read PCF8574_Value : %i", data);
+        // ESP_LOGD(TAG, "I2C read PCF8574 reply %i", ret);
+        // ESP_LOGD(TAG, "I2C read PCF8574_Value : %i", data);
         i2c_cmd_link_delete(cmd);
         Releasei2cMutex();
         return data;
@@ -143,10 +143,10 @@ uint8_t HAL_ESP32::ReadPCF8574BInputRegisters()
 
 void HAL_ESP32::SetOutputState(uint8_t outputId, RelayState state)
 {
-    //ESP_LOGD(TAG, "ACHTUNG ACHTUNG ACHTUNG ACHTUNG ACHTUNG ACHTUNG");
-    //PCF8574A_Value = 222;
+    // ESP_LOGD(TAG, "ACHTUNG ACHTUNG ACHTUNG ACHTUNG ACHTUNG ACHTUNG");
+    // PCF8574A_Value = 222;
     PCF8574A_Value = readBytePCF8574(I2C_NUM_0, PCF8574A_ADDRESS);
-    //ESP_LOGI(TAG, "PCF8574A read value: %i", PCF8574A_Value);
+    // ESP_LOGI(TAG, "PCF8574A read value: %i", PCF8574A_Value);
 
     // Relays connected to PCF8574A
     // P0 = BUZZER (outputId=0)
@@ -158,18 +158,18 @@ void HAL_ESP32::SetOutputState(uint8_t outputId, RelayState state)
     // P3 = EXT_MOSFET (outputId=6)
     // P7 interrupt input from PCF8674B
 
-    if (outputId <= 3)
+    if (outputId <= 6)
     {
         PCF8574A_Value = readBytePCF8574(I2C_NUM_0, PCF8574A_ADDRESS);
         uint8_t bit = outputId; // + 4;
         PCF8574A_Value = (state == RelayState::RELAY_ON) ? (PCF8574A_Value | (1 << bit)) : (PCF8574A_Value & ~(1 << bit));
         // ESP_ERROR_CHECK_WITHOUT_ABORT(writeBytePCF8574(I2C_NUM_0, PCF8574A_ADDRESS, PCF8574A_Value));
-        //esp_err_t ret = 
-                  writeBytePCF8574(I2C_NUM_0, PCF8574A_ADDRESS, PCF8574A_Value);
-        //ESP_LOGD(TAG, "PCF8574A reply fault code : %i", ret);
-        // TODO: Check return value
-        //PCF8574A_Value = readBytePCF8574(I2C_NUM_0, PCF8574A_ADDRESS);
-        //ESP_LOGD(TAG, "PCF8574A reply PCF8574A_Value = %i", PCF8574A_Value);
+        // esp_err_t ret =
+        writeBytePCF8574(I2C_NUM_0, PCF8574A_ADDRESS, PCF8574A_Value);
+        // ESP_LOGD(TAG, "PCF8574A reply fault code : %i", ret);
+        //  TODO: Check return value
+        // PCF8574A_Value = readBytePCF8574(I2C_NUM_0, PCF8574A_ADDRESS);
+        // ESP_LOGD(TAG, "PCF8574A reply PCF8574A_Value = %i", PCF8574A_Value);
     }
 }
 
@@ -349,19 +349,14 @@ void HAL_ESP32::ConfigureI2C(void (*PCF8574AInterrupt)(void), void (*PCF8574BInt
 
     ESP_LOGI(TAG, "Config i2c passed");
 
-    // https://datasheet.lcsc.com/szlcsc/1809041633_Texas-Instruments-TCA9534APWR_C206010.pdf
-    // TCA9534APWR Remote 8-Bit I2C and Low-Power I/O Expander With Interrupt Output and Configuration Registers
-    // https://lcsc.com/product-detail/Interface-I-O-Expanders_Texas-Instruments-TCA9534APWR_C206010.html
-    // A0/A1/A2 are LOW, so i2c address is 0x38
-
     // PINS
-    // P0= BLUE
-    // P1= RED
-    // P2= GREEN
-    // P3= DISPLAY BACKLIGHT LED
-    // P4= SPARE on J13
-    // P5= Canbus RS
-    // P6= SPARE on J13
+    // P0= BUZZER
+    // P1= ReedRelays
+    // P2= ReedRelay
+    // P3= MOSFET
+    // P4= MOSFET
+    // P5= MOSFET
+    // P6= MOSFET
     // P7= ESTOP (pull to ground to trigger)
     // INTERRUPT PIN = ESP32 IO34
 
@@ -383,8 +378,8 @@ void HAL_ESP32::ConfigureI2C(void (*PCF8574AInterrupt)(void), void (*PCF8574BInt
         else
         {
             ESP_LOGI(TAG, "wrote INPUT MASK at PCF8574A");
-            attachInterrupt(PCF8574A_INTERRUPT_PIN, PCF8574BInterrupt, FALLING);
-            ESP_LOGI(TAG, "PCF8574A interrupt attached");
+            //attachInterrupt(PCF8574A_INTERRUPT_PIN, PCF8574BInterrupt, FALLING);      // we have no inputs on PCF8574A
+            //ESP_LOGI(TAG, "PCF8574A interrupt attached");
         }
         /*         // toggle pins 0 to 2 to test the routine
                     delay(1000);
@@ -407,15 +402,14 @@ void HAL_ESP32::ConfigureI2C(void (*PCF8574AInterrupt)(void), void (*PCF8574BInt
         ESP_LOGE(TAG, "PCF8574A Error not found");
     }
     /*
-Now for the PCF8574B
-*/ // P0=EXT_IO_A
+Now for the PCF8574B 
+*/  // P0=EXT_IO_A
     // P1=EXT_IO_B
     // P2=EXT_IO_C
     // P3=EXT_IO_D
-    // P4=RELAY 1
-    // P5=RELAY 2
-    // P6=RELAY 3 (SSR)
-    // P7=EXT_IO_E
+    // P4=EXT_IO_E
+    // P5=PulseRELAY 1
+    // P6=PulseRELAY 2
 
     if (ESP_OK == test4PCF8574(I2C_NUM_0, PCF8574B_ADDRESS))
     {
@@ -441,3 +435,5 @@ Now for the PCF8574B
         ESP_LOGE(TAG, "PCF8574B Error not found");
     }
 }
+
+

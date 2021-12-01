@@ -12,11 +12,9 @@
   This code runs on ESP32 DEVKIT-C and compiles with VS CODE and PLATFORM IO environment.
 
   Unless you are making code changes, please use the pre-compiled version from GITHUB instead.
-*/
 
-#if defined(ESP8266)
-#error ESP8266 is not supported by this code
-#endif
+  reduced test Version
+*/
 
 #undef CONFIG_DISABLE_HAL_LOCKS
 
@@ -66,6 +64,7 @@ const uint8_t diyBMSCurrentMonitorModbusAddress = 90;
 #include "influxdb.h"
 
 #include "victron_canbus.h"
+#include "MyESP32eeprom.h"
 
 // cell modul Serial setup
 #define SERIAL_DATA Serial2 // port for cell modules communication
@@ -96,7 +95,7 @@ bool server_running = false;
 RelayState previousRelayState[RELAY_TOTAL];
 bool previousRelayPulse[RELAY_TOTAL];
 
-volatile enumInputState InputState[INPUTS_TOTAL];
+volatile uint8_t InputState[INPUTS_TOTAL] = {0};
 
 currentmonitoring_struct currentMonitor;
 
@@ -130,6 +129,8 @@ TaskHandle_t rs485_rx_task_handle = NULL;
 
 TaskHandle_t victron_canbus_tx_task_handle = NULL;
 TaskHandle_t victron_canbus_rx_task_handle = NULL;
+
+TaskHandle_t eeprom_task_handle = NULL;
 
 // This large array holds all the information about the modules
 CellModuleInfo cmi[maximum_controller_cell_modules];
@@ -292,6 +293,124 @@ void sdcardaction_callback(uint8_t action)
   {
     mountSDCard();
   }
+}
+
+void eeprom_task(void *arg)
+{
+
+  for (;;)
+  {
+    ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+    const uint8_t eeprom_address = 0x50;
+    const uint16_t starting_address = 0x0000;
+
+    // save BMS details to eeprom, We only care for ONE bank !!
+
+    char jsonbuffer[600];
+    DynamicJsonDocument doc(1024);
+    JsonObject root = doc.to<JsonObject>();
+
+    root["banks"] = mysettings.totalNumberOfBanks;
+    root["cells"] = mysettings.totalNumberOfSeriesModules;
+    root["uptime"] = millis() / 1000; // I want to know the uptime of the device.
+
+    // Set error flag if we have attempted to send 2*number of banks without a reply
+    /*       root["commserr"] = receiveProc.HasCommsTimedOut() ? 1 : 0;  */
+    /*      root["sent"] = prg.packetsGenerated;
+          root["received"] = receiveProc.packetsReceived;
+        root["badcrc"] = receiveProc.totalCRCErrors;
+          root["ignored"] = receiveProc.totalNotProcessedErrors;    */
+    root["oos"] = receiveProc.totalOutofSequenceErrors;
+    root["roundtrip"] = 36; // receiveProc.packetTimerMillisecond;
+
+    int counter = 0;
+    int i = 0;
+
+    Serial.print("Total number of cells: ");
+    Serial.println(TotalNumberOfCells());
+
+     while (i < TotalNumberOfCells() && counter < 8)
+    { 
+      // Only send valid module data
+      /*           if (cmi[i].valid)
+                { */
+      // uint8_t bank = i / mysettings.totalNumberOfSeriesModules;
+      // uint8_t module = i - (bank * mysettings.totalNumberOfSeriesModules);
+
+    Serial.print("cells number i: ");
+    Serial.println(i);
+
+      // doc.clear();
+      JsonObject cell = doc.createNestedObject(String(i));
+      cell["voltage"] = (float)cmi[i].voltagemV / (float)1000.0;
+      cell["vMax"] = (float)cmi[i].voltagemVMax / (float)1000.0;
+      cell["vMin"] = (float)cmi[i].voltagemVMin / (float)1000.0;
+      cell["inttemp"] = cmi[i].internalTemp;
+      cell["exttemp"] = cmi[i].externalTemp;
+      cell["bypass"] = cmi[i].inBypass ? 1 : 0;
+      cell["PWM"] = (int)((float)cmi[i].PWMValue / (float)255.0 * 100);
+      cell["bypassT"] = cmi[i].bypassOverTemp ? 1 : 0;
+      cell["bpc"] = cmi[i].badPacketCount;
+      cell["mAh"] = cmi[i].BalanceCurrentCount;
+      // serializeJson(doc, jsonbuffer, sizeof(jsonbuffer));
+
+      // }
+      // counter++;
+       i++;
+    } 
+
+    serializeJson(doc, jsonbuffer, sizeof(jsonbuffer));
+
+    i = 0;
+    uint8_t braket = 0;
+    do
+    {
+      if (jsonbuffer[i] == '{')
+      {
+        braket += 1;
+        i++;
+      }
+      if (jsonbuffer[i] == '}')
+      {
+        braket -= 1;
+        i++;
+      }
+      if (jsonbuffer[i] != '{' && jsonbuffer[i] != '}')
+      {
+        i++;
+      }
+    } while (braket > 0);
+
+    jsonbuffer[i + 1] = '\0';
+
+    // Eeprom sequential write
+
+    eeprom_write(I2C_NUM_0, eeprom_address, starting_address, (uint8_t *)jsonbuffer, strlen(jsonbuffer) + 1);
+
+    vTaskDelay(20 / portTICK_PERIOD_MS);
+
+    // EEPROM sequential read example and error checking
+    uint8_t *sequential_read_data = (uint8_t *)malloc(strlen(jsonbuffer) + 1);
+
+    // uint8_t sequential_read_data[200];
+
+    esp_err_t ret = eeprom_read(I2C_NUM_0, eeprom_address, starting_address, sequential_read_data, strlen(jsonbuffer) + 1); // strlen(jsonbuffer));
+
+    if (ret == ESP_ERR_TIMEOUT)
+      Serial.println("I2C timeout...\n");
+    if (ret == ESP_OK)
+      Serial.println("The JSON read operation was successful!\n");
+    else
+      Serial.println("The JSON read operation was not successful, no ACK recieved.  Is the device connected properly?\n");
+
+    Serial.print("Read the following JSON data from EEPROM:");
+    Serial.println((char *)sequential_read_data);
+
+    free(sequential_read_data);
+
+    vTaskDelay(1);
+  }
+  vTaskDelete(NULL); // Delete this task if it exits from the loop above
 }
 
 void avrprog_task(void *param)
@@ -683,7 +802,7 @@ void sdcardlog_outputs_task(void *param)
 
             for (uint8_t i = 0; i < RELAY_TOTAL; i++)
             {
-              // This may output invalid data when controller is first powered up
+              // This may output invalid data when controller is first powered up                       // To Do I think it does indeed output invalid data
               sprintf(dataMessage, "%c", previousRelayState[i] == RelayState::RELAY_ON ? 'Y' : 'N');
               file.print(dataMessage);
               if (i < RELAY_TOTAL - 1)
@@ -761,17 +880,6 @@ void PCF8574A_isr_task(void *param)
     ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
     ESP_LOGD(TAG, "PCF8574A_isr");
-
-    /*     // Read ports A/B/C/D inputs (on TCA6408)
-        uint8_t v = hal.ReadPCF8574AInputRegisters();
-        // P0=A
-        InputState[0] = (v & B00000001) == 0 ? enumInputState::INPUT_LOW : enumInputState::INPUT_HIGH;
-        // P1=B
-        InputState[1] = (v & B00000010) == 0 ? enumInputState::INPUT_LOW : enumInputState::INPUT_HIGH;
-        // P2=C
-        InputState[2] = (v & B00000100) == 0 ? enumInputState::INPUT_LOW : enumInputState::INPUT_HIGH;
-        // P3=D
-        InputState[3] = (v & B00001000) == 0 ? enumInputState::INPUT_LOW : enumInputState::INPUT_HIGH; */
   }
 }
 
@@ -782,33 +890,65 @@ void PCF8574B_isr_task(void *param)
     // Wait until this task is triggered https://www.freertos.org/ulTaskNotifyTake.html
     ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
-    ESP_LOGD(TAG, "esp_err_t_isr");
+    ESP_LOGD(TAG, "PCF8574B_isr");
 
     // Read ports
-    // The 9534 deals with internal LED outputs and spare IO on J10
+    // The PCF8574B deals with inputs P0 to P5 and with pulse Relay over P6 and P7
+    // Emergency STOP is connected to P0
     uint8_t v = hal.ReadPCF8574BInputRegisters();
+    ESP_LOGD(TAG, "PCF8574B input register %d", v);
+    v = (~v) & B00111111; // we invert the input bits here and test for LOW or we dont and test for HIGH
+    ESP_LOGD(TAG, "PCF8574B input register after bit inversion %d", v);
 
-    // P4= J13 PIN 1 = WAKE UP TFT FOR DISPLAYS WITHOUT TOUCH
-    InputState[4] = (v & B00010000) == 0 ? enumInputState::INPUT_LOW : enumInputState::INPUT_HIGH;
-    // P6 = spare I/O (on PCB pin)
-    InputState[5] = (v & B01000000) == 0 ? enumInputState::INPUT_LOW : enumInputState::INPUT_HIGH;
-    // P7 = Emergency Stop
-    InputState[6] = (v & B10000000) == 0 ? enumInputState::INPUT_LOW : enumInputState::INPUT_HIGH;
+    // P0 = J11 pin 1 Emergency Stop
+    InputState[0] = (v & B00000001) == 0 ? INPUT_LOW : INPUT_HIGH;
+    // P1 = J11 pin 3
+    InputState[1] = (v & B00000010) == 0 ? INPUT_LOW : INPUT_HIGH;
+    // P2 = J12 pin 1
+    InputState[2] = (v & B00000100) == 0 ? INPUT_LOW : INPUT_HIGH;
+    // P3 = J12 pin 3
+    InputState[3] = (v & B00001000) == 0 ? INPUT_LOW : INPUT_HIGH;
+    // P4 = J18 pin 1
+    InputState[4] = (v & B00010000) == 0 ? INPUT_LOW : INPUT_HIGH;
+    // P5 = J18 pin 2
+    InputState[4] = (v & B00100000) == 0 ? INPUT_LOW : INPUT_HIGH;
 
     // Emergency Stop (J1) has triggered
-    if (InputState[6] == enumInputState::INPUT_LOW)
+    if (InputState[0] == INPUT_LOW)
     {
       // emergencyStop = true; // test disabled
       emergencyStop = false;
+      ESP_LOGI(TAG, "Input pin0 PCF8574B triggered");
+      InputState[0] = INPUT_HIGH;
     }
 
-    if (InputState[4] == enumInputState::INPUT_LOW)
+    if (InputState[1] == INPUT_LOW)
+    {
+      ESP_LOGI(TAG, "Input pin1 PCF8574B triggered");
+      InputState[1] = INPUT_HIGH;
+    }
+
+    if (InputState[2] == INPUT_LOW)
+    {
+      ESP_LOGI(TAG, "Input pin2 PCF8574B triggered");
+      InputState[2] = INPUT_HIGH;
+    }
+
+    if (InputState[3] == INPUT_LOW)
+    {
+      ESP_LOGI(TAG, "Input pin3 PCF8574B triggered");
+      InputState[3] = INPUT_HIGH;
+    }
+
+    if (InputState[4] == INPUT_LOW)
     {
       // Wake screen on pin going low
-      if (tftwakeup_task_handle != NULL)
-      {
-        xTaskNotify(tftwakeup_task_handle, 0x00, eNotifyAction::eNoAction);
-      }
+      // if (tftwakeup_task_handle != NULL)
+      //{
+      // xTaskNotify(tftwakeup_task_handle, 0x00, eNotifyAction::eNoAction);
+      ESP_LOGI(TAG, "Input pin 4 PCF8574B triggered");
+      //}
+      InputState[4] = INPUT_HIGH;
     }
   }
 }
@@ -1315,7 +1455,7 @@ void rules_task(void *param)
 
         ESP_LOGI(TAG, "Set Relay %i=%i", n, relay[n] == RelayState::RELAY_ON ? 1 : 0);
 
-        // This would be better if we worked out the bit pattern first and then just submitted that as a single i2c read/write transaction
+        // This would be better if we worked out the bit pattern first and then just submitted that as a single i2c read/write transaction < !To Do that is much better!
 
         hal.SetOutputState(n, relay[n]);
 
@@ -1479,15 +1619,13 @@ void SetupOTA()
 
   ArduinoOTA.setPort(3232);
   ArduinoOTA.setPassword("1jiOOx12AQgEco4e");
-  ArduinoOTA
-      .onStart([]()
-               {
+  ArduinoOTA.onStart([]()
+                     {
                  String type;
                  if (ArduinoOTA.getCommand() == U_FLASH)
                    type = "sketch";
                  else // U_SPIFFS
                    type = "filesystem";
-
                  // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
                  ESP_LOGI(TAG, "Start updating %s", type); });
   ArduinoOTA.onEnd([]()
@@ -1617,6 +1755,7 @@ void mqtt2(void *param)
       serializeJson(doc, jsonbuffer, sizeof(jsonbuffer));
       sprintf(topic, "%s/status", mysettings.mqtt_topic);
       mqttClient.publish(topic, 0, false, jsonbuffer);
+
 #if defined(MQTT_LOGGING)
       ESP_LOGD(TAG, "MQTT %s %s", topic, jsonbuffer);
 // SERIAL_DEBUG.print("MQTT - ");SERIAL_DEBUG.print(topic);  SERIAL_DEBUG.print('=');  SERIAL_DEBUG.println(jsonbuffer);
@@ -3274,6 +3413,17 @@ bool LoadWiFiConfigFromSDCard(bool existingConfigValid)
   return ret;
 }
 
+void printLocalTime()
+{
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo))
+  {
+    ESP_LOGI(TAG, "Failed to obtain time");
+    return;
+  }
+  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+}
+
 void setup()
 {
   WiFi.mode(WIFI_OFF);
@@ -3379,8 +3529,8 @@ void setup()
   xTaskCreate(updatetftdisplay_task, "tftupd", 2048, nullptr, 1, &updatetftdisplay_task_handle);
   xTaskCreate(avrprog_task, "avrprog", 2500, &_avrsettings, configMAX_PRIORITIES - 5, &avrprog_task_handle);
 
-  xTaskCreate(PCF8574A_isr_task, "tca6408", 2048, nullptr, configMAX_PRIORITIES - 3, &PCF8574A_isr_task_handle);
-  xTaskCreate(PCF8574B_isr_task, "tca9534", 2048, nullptr, configMAX_PRIORITIES - 3, &PCF8574B_isr_task_handle);
+  xTaskCreate(PCF8574A_isr_task, "pcf8574A", 2048, nullptr, configMAX_PRIORITIES - 3, &PCF8574A_isr_task_handle);
+  xTaskCreate(PCF8574B_isr_task, "pcf8574B", 2048, nullptr, configMAX_PRIORITIES - 3, &PCF8574B_isr_task_handle);
 
   xTaskCreate(wifiresetdisable_task, "wifidbl", 800, nullptr, 1, &wifiresetdisable_task_handle);
   xTaskCreate(sdcardlog_task, "sdlog", 3600, nullptr, 1, &sdcardlog_task_handle);
@@ -3443,6 +3593,8 @@ void setup()
     EepromConfigValid = DIYBMSSoftAP::LoadConfigFromEEPROM();
   }
 
+  xTaskCreate(eeprom_task, "eeprom_read_write_demo", 1024 * 2, NULL, 5, &eeprom_task_handle); // test routine for eeprom
+
   // Temporarly force WIFI settings
   // wifi_eeprom_settings xxxx;
   // strcpy(xxxx.wifi_ssid,"XXXXXX");
@@ -3495,6 +3647,8 @@ void setup()
 
     // Wake screen on power up
     xTaskNotify(tftwakeup_task_handle, 0x00, eNotifyAction::eNoAction);
+
+    printLocalTime();
   }
 }
 
@@ -3514,6 +3668,9 @@ void loop()
     {
       // Attempt to connect to WiFi every 30 seconds, this caters for when WiFi drops
       // such as AP reboot, its written to return without action if we are already connected
+
+      // xTaskNotify(eeprom_task_handle, 0x00, eNotifyAction::eNoAction); // test routine for eeprom
+
       connectToWifi();
       wifitimer = currentMillis;
       connectToMqtt();

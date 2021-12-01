@@ -1051,6 +1051,8 @@ $(function () {
         $.getJSON("settings.json",
             function (data) {
 
+              //  $("#setTime").val(data.settings.setTimeName);
+              //  $("#setDate").val(data.settings.setDateName);
                 $("#NTPServer").val(data.settings.NTPServerName);
                 $("#NTPZoneHour").val(data.settings.TimeZone);
                 $("#NTPZoneMin").val(data.settings.MinutesTimeZone);

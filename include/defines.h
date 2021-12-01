@@ -123,6 +123,8 @@ struct diybms_eeprom_settings
   uint8_t BypassOverTempShutdown;
   uint16_t BypassThresholdmV;
 
+  char setTime[10 + 1]; // = "manual set time";
+  char setDate[14 + 1]; // = "manual set date";
   int8_t timeZone;        // = 0;
   int8_t minutesTimeZone; // = 0;
   bool daylight;          //=false;

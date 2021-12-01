@@ -7,7 +7,7 @@ PCB WITH RS485/CANBUS/TFT DISPLAY
 #include <Arduino.h>
 #include "driver/i2c.h"
 #include <driver/can.h>
-#include "esp32-hal-i2c.h"
+#include "esp32-hal-i2c.h" 
 #include <SPI.h>
 
 //#define GREEN_LED 2
@@ -19,7 +19,6 @@ PCB WITH RS485/CANBUS/TFT DISPLAY
 #ifndef HAL_ESP32_H_
 #define HAL_ESP32_H_
 
-// we need to change from TCA9534 and TCA6408 code to PCF8574 code to access our i2c portexpanders. we don´t have TCA6408 and TCA9534!
 // GPIO34 (input only pin)
 #define TCA9534A_INTERRUPT_PIN GPIO_NUM_34
 #define TCA9534APWR_ADDRESS 0x38      // does not exist not on our board
@@ -38,7 +37,7 @@ PCB WITH RS485/CANBUS/TFT DISPLAY
 // PCF8574B
 // i2c address 0x25 is the PCF8574B chip on the lower edge of my board, intended for input and to controll a bistable relay
 #define PCF8574B_INTERRUPT_PIN GPIO_NUM_34
-#define PCF8574B_ADDRESS 0x25
+#define PCF8574B_ADDRESS 0x3D           //board 002 = 0x25
 #define PCF8574B_INPUTMASK B00111111    // pin6 + 7 control bistable relay the rest can be used as input
 
 // GPIO39 (input only pin)
@@ -346,6 +345,8 @@ private:
     esp_err_t writeByte(i2c_port_t i2c_num, uint8_t dev, uint8_t reg, uint8_t data);
     uint8_t readBytePCF8574(i2c_port_t i2c_num, uint8_t dev);
     uint8_t readByte(i2c_port_t i2c_num, uint8_t dev, uint8_t reg);
+
+    
 
 };
 
