@@ -77,6 +77,8 @@ HAL_ESP32 hal;
 
 volatile bool emergencyStop = false;
 bool _sd_card_installed = false;
+bool DS3231_installed = false;
+bool DS3231_setTime = false;
 
 // Used for WIFI hostname and also sent to Victron over CANBUS
 char hostname[16];
@@ -84,7 +86,9 @@ char hostname[16];
 extern bool _tft_screen_available;
 
 Rules rules;
-diybms_eeprom_settings mysettings;
+// diybms_eeprom_settings mysettings;
+Diybms_eeprom_settings mysettings;
+tm My_localRTC;
 uint16_t TotalNumberOfCells() { return mysettings.totalNumberOfBanks * mysettings.totalNumberOfSeriesModules; }
 
 uint32_t canbus_messages_received = 0;
@@ -131,6 +135,7 @@ TaskHandle_t victron_canbus_tx_task_handle = NULL;
 TaskHandle_t victron_canbus_rx_task_handle = NULL;
 
 TaskHandle_t eeprom_task_handle = NULL;
+TaskHandle_t DS3231setTime_task_handle = NULL;
 
 // This large array holds all the information about the modules
 CellModuleInfo cmi[maximum_controller_cell_modules];
@@ -295,6 +300,24 @@ void sdcardaction_callback(uint8_t action)
   }
 }
 
+// write the time/date stored in mysettings to DS3231 and setup the realtime clock
+void DS3231_task(void *arg)
+{
+
+  for (;;)
+  {
+    ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+    // write and read DS3231 RTC chip
+    // hal.setTimeDateMan(&mysettings,  &My_localRTC); // time and date are hardcoded in this function
+    hal.parseTimeDateToTM(&mysettings, &My_localRTC); // parse a time/datestring into the time.h tm struct
+    hal.writeDS3231_RTC(&My_localRTC);                // write Time to DS3231 RTC
+    hal.readDS3231_RTC(&My_localRTC);                 // read time from DS3231 and print it
+                                                      // hal.parseTMtoTimeDate(&mysettings,  &My_localRTC); // write the time coming from DS3231 to mysettings structure
+    //  add here set esp rtc function
+  }
+  vTaskDelete(NULL); // Delete this task if it exits from the loop above
+}
+
 void eeprom_task(void *arg)
 {
 
@@ -329,16 +352,16 @@ void eeprom_task(void *arg)
     Serial.print("Total number of cells: ");
     Serial.println(TotalNumberOfCells());
 
-     while (i < TotalNumberOfCells() && counter < 8)
-    { 
+    while (i < TotalNumberOfCells() && counter < 8)
+    {
       // Only send valid module data
       /*           if (cmi[i].valid)
                 { */
       // uint8_t bank = i / mysettings.totalNumberOfSeriesModules;
       // uint8_t module = i - (bank * mysettings.totalNumberOfSeriesModules);
 
-    Serial.print("cells number i: ");
-    Serial.println(i);
+      Serial.print("cells number i: ");
+      Serial.println(i);
 
       // doc.clear();
       JsonObject cell = doc.createNestedObject(String(i));
@@ -356,8 +379,8 @@ void eeprom_task(void *arg)
 
       // }
       // counter++;
-       i++;
-    } 
+      i++;
+    }
 
     serializeJson(doc, jsonbuffer, sizeof(jsonbuffer));
 
@@ -2976,6 +2999,10 @@ void LoadConfiguration()
   strcpy(mysettings.influxdb_databasebucket, "bucketname");
   strcpy(mysettings.influxdb_orgid, "organisation");
 
+  // read DS3231 RTC chip
+  hal.readDS3231_RTC(&My_localRTC);                 // read time from DS3231
+  hal.parseTMtoTimeDate(&mysettings, &My_localRTC); // write the time coming from DS3231 to mysettings structure
+  // add here set esp rtc function
   mysettings.timeZone = 0;
   mysettings.minutesTimeZone = 0;
   mysettings.daylight = false;
@@ -3456,6 +3483,15 @@ void setup()
   hal.ConfigureI2C(PCF8574AInterrupt, PCF8574BInterrupt);
   hal.ConfigureVSPI();
 
+  // write and read DS3231 RTC chip
+  // hal.setTimeDateMan(&mysettings,  &My_localRTC); // time and date are hardcoded in this function
+  // hal.parseTimeDateToTM(&mysettings,  &My_localRTC);  // parse a time/datestring into the time.h tm struct
+  // hal.writeDS3231_RTC(&My_localRTC);   // write Time to DS3231 RTC
+  hal.readDS3231_RTC(&My_localRTC);                 // read time from DS3231 and print it
+  hal.parseTMtoTimeDate(&mysettings, &My_localRTC); // write the time coming from DS3231 to mysettings structure
+  // add here set esp rtc function To Do
+  // add let the webpage update its time/date picker when its called To Do
+
   _avrsettings.inProgress = false;
   _avrsettings.programmingModeEnabled = false;
 
@@ -3595,6 +3631,8 @@ void setup()
 
   xTaskCreate(eeprom_task, "eeprom_read_write_demo", 1024 * 2, NULL, 5, &eeprom_task_handle); // test routine for eeprom
 
+  xTaskCreate(DS3231_task, "set Time/Date in DS3231", 1024 * 2, NULL, 5, &DS3231setTime_task_handle); // test for DS3231
+
   // Temporarly force WIFI settings
   // wifi_eeprom_settings xxxx;
   // strcpy(xxxx.wifi_ssid,"XXXXXX");
@@ -3669,7 +3707,13 @@ void loop()
       // Attempt to connect to WiFi every 30 seconds, this caters for when WiFi drops
       // such as AP reboot, its written to return without action if we are already connected
 
-      // xTaskNotify(eeprom_task_handle, 0x00, eNotifyAction::eNoAction); // test routine for eeprom
+      // xTaskNotify(eeprom_task_handle, 0x00, eNotifyAction::eNoAction); /// test routine for eeprom
+
+      if (DS3231_setTime == true)
+      {
+        DS3231_setTime = false;
+        xTaskNotify(DS3231setTime_task_handle, 0x00, eNotifyAction::eNoAction); //
+      }
 
       connectToWifi();
       wifitimer = currentMillis;

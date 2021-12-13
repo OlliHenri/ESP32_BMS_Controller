@@ -121,6 +121,7 @@ private:
 
 //TODO: Remove this
 extern bool _sd_card_installed;
+extern bool DS3231_setTime;
 extern TaskHandle_t avrprog_task_handle;
 extern avrprogramsettings _avrsettings;
 extern RelayState previousRelayState[RELAY_TOTAL];

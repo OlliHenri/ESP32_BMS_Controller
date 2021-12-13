@@ -60,6 +60,54 @@ PCB WITH RS485/CANBUS/TFT DISPLAY
 #define RS485_TX GPIO_NUM_22
 #define RS485_ENABLE GPIO_NUM_25
 
+// RTC DS3231
+// I2C Slave Address
+#define DS3231_ADDRESS 0x68
+
+// DS3231 Register Addresses
+#define DS3231_REG_TIMEDATE 0x00
+#define DS3231_REG_ALARMONE 0x07
+#define DS3231_REG_ALARMTWO 0x0B
+
+#define DS3231_REG_CONTROL 0x0E
+#define DS3231_REG_STATUS 0x0F
+#define DS3231_REG_AGING 0x10
+
+#define DS3231_REG_TEMP 0x11
+
+// DS3231 Register Data Size if not just 1
+#define DS3231_REG_TIMEDATE_SIZE 7
+#define DS3231_REG_ALARMONE_SIZE 4
+#define DS3231_REG_ALARMTWO_SIZE 3
+
+#define DS3231_REG_TEMP_SIZE 2
+
+// DS3231 Control Register Bits
+#define DS3231_A1IE 0
+#define DS3231_A2IE 1
+#define DS3231_INTCN 2
+#define DS3231_RS1 3
+#define DS3231_RS2 4
+#define DS3231_CONV 5
+#define DS3231_BBSQW 6
+#define DS3231_EOSC 7
+#define DS3231_AIEMASK (_BV(DS3231_A1IE) | _BV(DS3231_A2IE))
+#define DS3231_RSMASK (_BV(DS3231_RS1) | _BV(DS3231_RS2))
+
+// DS3231 Status Register Bits
+#define DS3231_A1F 0
+#define DS3231_A2F 1
+#define DS3231_BSY 2
+#define DS3231_EN32KHZ 3
+#define DS3231_OSF 7
+#define DS3231_AIFMASK (_BV(DS3231_A1F) | _BV(DS3231_A2F))
+
+#define CONFIG_I2CDEV_TIMEOUT 1000 // I2C port timeout
+#define DS3231_12HOUR_FLAG 0x40
+#define DS3231_12HOUR_MASK 0x1F
+#define DS3231_PM_FLAG 0x20
+#define DS3231_24HOUR_MASK 0x3F
+
 struct TouchScreenValues
 {
     bool touched;
@@ -86,6 +134,12 @@ public:
     void SetOutputState(uint8_t outputId, RelayState state);
     uint8_t ReadPCF8574AInputRegisters();
     uint8_t ReadPCF8574BInputRegisters();
+    
+    void readDS3231_RTC(struct tm *localRTC);
+    void writeDS3231_RTC(struct tm *localRTC);
+    void parseTimeDateToTM(Diybms_eeprom_settings *_mysettings,  struct tm *localRTC);
+    void parseTMtoTimeDate(Diybms_eeprom_settings *_mysettings, struct tm *localRTC);
+    void setTimeDateMan(Diybms_eeprom_settings *_mysettings,  struct tm *localRTC);
 
     void Led(uint8_t bits);
     void ConfigurePins(void (*WiFiPasswordResetInterrput)(void));
@@ -340,14 +394,18 @@ private:
     // Copy of pin state for PCF8574B
     uint8_t PCF8574B_Value;
 
-    esp_err_t test4PCF8574(i2c_port_t i2c_num, uint8_t dev);
+    esp_err_t test4i2cDevice(i2c_port_t i2c_num, uint8_t dev);
+    
     esp_err_t writeBytePCF8574(i2c_port_t i2c_num, uint8_t dev, uint8_t data);
     esp_err_t writeByte(i2c_port_t i2c_num, uint8_t dev, uint8_t reg, uint8_t data);
     uint8_t readBytePCF8574(i2c_port_t i2c_num, uint8_t dev);
     uint8_t readByte(i2c_port_t i2c_num, uint8_t dev, uint8_t reg);
 
+    uint8_t BcdToUint8(uint8_t val);
+    uint8_t Uint8ToBcd(uint8_t val);
+    esp_err_t readRegDS3231(i2c_port_t i2c_num, uint8_t chip_addr, uint8_t Reg_Adr, uint8_t *data_rd, size_t num_bytes);
+    esp_err_t setRegDS3231(i2c_port_t i2c_num, uint8_t *Reg_Adr, size_t out_reg_size, uint8_t *data_rd, size_t num_bytes);
     
-
 };
 
 #endif

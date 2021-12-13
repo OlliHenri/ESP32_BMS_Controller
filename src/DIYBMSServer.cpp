@@ -197,7 +197,8 @@ void DIYBMSServer::saveConfigurationToSDCard(AsyncWebServerRequest *request)
     root["BypassOverTempShutdown"] = _mysettings->BypassOverTempShutdown;
     root["BypassThresholdmV"] = _mysettings->BypassThresholdmV;
 
-    root["timeZone"] = _mysettings->timeZone;
+    root["setTime"] = _mysettings->setTime;
+    root["setDate"] = _mysettings->setDate;
     root["minutesTimeZone"] = _mysettings->minutesTimeZone;
     root["daylight"] = _mysettings->daylight;
     root["ntpServer"] = _mysettings->ntpServer;
@@ -1016,6 +1017,7 @@ void DIYBMSServer::saveNTP(AsyncWebServerRequest *request)
     AsyncWebParameter *p1 = request->getParam("setDate", true);
     p1->value().toCharArray(_mysettings->setDate, sizeof(_mysettings->setDate));
     // ESP_LOGI(TAG, " manual set date:%s ", _mysettings->setDate);
+    DS3231_setTime = true;
   }
 
   if (request->hasParam("setTime", true)) // write manual set time to mysettings->setTime
@@ -1023,6 +1025,7 @@ void DIYBMSServer::saveNTP(AsyncWebServerRequest *request)
     AsyncWebParameter *p1 = request->getParam("setTime", true);
     p1->value().toCharArray(_mysettings->setTime, sizeof(_mysettings->setTime));
     // ESP_LOGI(TAG, " manual set time:%s ", _mysettings->setTime);
+    DS3231_setTime = true;
   }
 
   if (request->hasParam("NTPServer", true))
@@ -1370,6 +1373,8 @@ void DIYBMSServer::settings(AsyncWebServerRequest *request)
   settings["bypassthreshold"] = _mysettings->BypassThresholdmV;
   settings["bypassovertemp"] = _mysettings->BypassOverTempShutdown;
 
+  settings["setTime"] = _mysettings->setTime;
+  settings["setDate"] = _mysettings->setDate;
   settings["NTPServerName"] = _mysettings->ntpServer;
   settings["TimeZone"] = _mysettings->timeZone;
   settings["MinutesTimeZone"] = _mysettings->minutesTimeZone;

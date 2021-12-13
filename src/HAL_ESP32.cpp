@@ -298,6 +298,33 @@ void HAL_ESP32::SwapGPIO0ToOutput()
 }
 
 // test if i2c device is present
+esp_err_t HAL_ESP32::test4i2cDevice(i2c_port_t i2c_num, uint8_t dev)
+{
+    esp_err_t ret = -1;
+
+    if (Geti2cMutex())
+    {
+        uint8_t data;
+        i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+        // Send start, and read the register
+        i2c_master_start(cmd);
+        i2c_master_write_byte(cmd, (dev << 1) | I2C_MASTER_READ, true);
+        // Read single byte and expect NACK in reply
+        i2c_master_read_byte(cmd, &data, i2c_ack_type_t::I2C_MASTER_NACK);
+        i2c_master_stop(cmd);
+        // esp_err_t ret =
+
+        ret = i2c_master_cmd_begin(i2c_num, cmd, pdMS_TO_TICKS(100));
+
+        i2c_cmd_link_delete(cmd);
+        Releasei2cMutex();
+        ESP_LOGI(TAG, "Test I2C for device: %i", dev);
+        ESP_LOGD(TAG, "ESP_OK = 0, I2C reply %i", ret);
+    }
+    return ret;
+}
+
+/* // test if i2c device is present
 esp_err_t HAL_ESP32::test4PCF8574(i2c_port_t i2c_num, uint8_t dev)
 {
     esp_err_t ret = -1;
@@ -321,7 +348,7 @@ esp_err_t HAL_ESP32::test4PCF8574(i2c_port_t i2c_num, uint8_t dev)
         ESP_LOGI(TAG, "Test I2C for PCF8574A");
     }
     return ret;
-}
+} */
 
 void HAL_ESP32::ConfigureI2C(void (*PCF8574AInterrupt)(void), void (*PCF8574BInterrupt)(void))
 {
@@ -349,6 +376,20 @@ void HAL_ESP32::ConfigureI2C(void (*PCF8574AInterrupt)(void), void (*PCF8574BInt
 
     ESP_LOGI(TAG, "Config i2c passed");
 
+    // search for DS3231 RTC
+    esp_err_t ret = -1;
+    if (ESP_OK == test4i2cDevice(I2C_NUM_0, DS3231_ADDRESS))
+    {
+
+        // ESP_LOGI(TAG, "PCF8574A read value: %i", PCF8574A_Value);
+
+        ESP_LOGD(TAG, "DS3231 ESP_OK = 0, DS3231 found ");
+    }
+    else
+    {
+        ESP_LOGE(TAG, "DS3231 Error not found");
+    }
+
     // PINS
     // P0= BUZZER
     // P1= ReedRelays
@@ -365,8 +406,8 @@ void HAL_ESP32::ConfigureI2C(void (*PCF8574AInterrupt)(void), void (*PCF8574BInt
     // MASK=10000000
 
     // search for PCF8574A
-    esp_err_t ret = -1;
-    if (ESP_OK == test4PCF8574(I2C_NUM_0, PCF8574A_ADDRESS))
+    ret = -1;
+    if (ESP_OK == test4i2cDevice(I2C_NUM_0, PCF8574A_ADDRESS))
     {
 
         ret = writeBytePCF8574(I2C_NUM_0, PCF8574A_ADDRESS, PCF8574A_INPUTMASK);
@@ -378,8 +419,8 @@ void HAL_ESP32::ConfigureI2C(void (*PCF8574AInterrupt)(void), void (*PCF8574BInt
         else
         {
             ESP_LOGI(TAG, "wrote INPUT MASK at PCF8574A");
-            //attachInterrupt(PCF8574A_INTERRUPT_PIN, PCF8574BInterrupt, FALLING);      // we have no inputs on PCF8574A
-            //ESP_LOGI(TAG, "PCF8574A interrupt attached");
+            // attachInterrupt(PCF8574A_INTERRUPT_PIN, PCF8574BInterrupt, FALLING);      // we have no inputs on PCF8574A
+            // ESP_LOGI(TAG, "PCF8574A interrupt attached");
         }
         /*         // toggle pins 0 to 2 to test the routine
                     delay(1000);
@@ -402,8 +443,8 @@ void HAL_ESP32::ConfigureI2C(void (*PCF8574AInterrupt)(void), void (*PCF8574BInt
         ESP_LOGE(TAG, "PCF8574A Error not found");
     }
     /*
-Now for the PCF8574B 
-*/  // P0=EXT_IO_A
+Now for the PCF8574B
+*/ // P0=EXT_IO_A
     // P1=EXT_IO_B
     // P2=EXT_IO_C
     // P3=EXT_IO_D
@@ -411,7 +452,7 @@ Now for the PCF8574B
     // P5=PulseRELAY 1
     // P6=PulseRELAY 2
 
-    if (ESP_OK == test4PCF8574(I2C_NUM_0, PCF8574B_ADDRESS))
+    if (ESP_OK == test4i2cDevice(I2C_NUM_0, PCF8574B_ADDRESS))
     {
         // if PCF8574B is found set Input mask else abort
         ret = writeBytePCF8574(I2C_NUM_0, PCF8574B_ADDRESS, PCF8574B_INPUTMASK);
@@ -436,4 +477,263 @@ Now for the PCF8574B
     }
 }
 
+// ****************  DS3231 RTC routines  *****************
+// set manual Time and Date in mysettings
+void HAL_ESP32::setTimeDateMan(Diybms_eeprom_settings *_mysettings, struct tm *localRTC)
+{
+    int i;
+    const char my_manDateSet[11] = {'2', '0', '2', '1', '-', '1', '2', '-', '1', '0', '\0'}; // set the manual Date here
+    strcpy(_mysettings->setDate, my_manDateSet);
+    int stringLength = strlen(_mysettings->setDate); // finds length of the Datearray
+    ESP_LOGI(TAG, "Set Date manualy, the stringlength of setDate %s is: %d", _mysettings->setDate, stringLength);
+    const char my_manTimeSet[10] = {'2', '2', ':', '3', '4', '\0'}; // set the manual Time here
+    strcpy(_mysettings->setTime, my_manTimeSet);
+    stringLength = strlen(_mysettings->setTime); // finds length of the array
+    ESP_LOGI(TAG, "Set Time manualy,the stringlength of setTime %s is: %d", _mysettings->setTime, stringLength);
+}
 
+// write time/date strings into time.h structure
+/* the parameters:
+Diybms_eeprom_settings mysettings;
+hand over the address of &mysettings;
+tm My_localRTC;
+hand over the address of  &My_localRTC; */
+void HAL_ESP32::parseTimeDateToTM(Diybms_eeprom_settings *_mysettings, struct tm *localRTC)
+{
+    // copy hours to uint
+    char tempBuff[5] = {0};
+    tempBuff[0] = _mysettings->setTime[0]; // hours
+    tempBuff[1] = _mysettings->setTime[1];
+    tempBuff[2] = '\0';
+    localRTC->tm_hour = (uint8_t)atoi(tempBuff);
+    tempBuff[0] = _mysettings->setTime[3]; // minutes
+    tempBuff[1] = _mysettings->setTime[4];
+    tempBuff[2] = '\0';
+    localRTC->tm_min = atoi(tempBuff);
+    localRTC->tm_sec = 0; // seconds
+    ESP_LOGI(TAG, "Time is h: %d ; m: %d ; s: %d", localRTC->tm_hour, localRTC->tm_min, localRTC->tm_sec);
+    tempBuff[0] = _mysettings->setDate[0]; // year
+    tempBuff[1] = _mysettings->setDate[1];
+    tempBuff[2] = _mysettings->setDate[2];
+    tempBuff[3] = _mysettings->setDate[3];
+    tempBuff[4] = '\0';
+    localRTC->tm_year = atoi(tempBuff);
+    tempBuff[0] = _mysettings->setDate[5]; // month
+    tempBuff[1] = _mysettings->setDate[6];
+    tempBuff[2] = '\0';
+    localRTC->tm_mon = (uint8_t)atoi(tempBuff);
+    tempBuff[0] = _mysettings->setDate[8]; // day of month
+    tempBuff[1] = _mysettings->setDate[9];
+    tempBuff[2] = '\0';
+    localRTC->tm_mday = (uint8_t)atoi(tempBuff);
+    ESP_LOGI(TAG, "Date is y: %d ; m: %d ; d: %d", localRTC->tm_year, localRTC->tm_mon, localRTC->tm_mday);
+}
+
+// write time.h structure into time/date strings
+/* the parameters:
+Diybms_eeprom_settings mysettings;
+hand over the address of &mysettings;
+tm My_localRTC;
+hand over the address of  &My_localRTC; */
+void HAL_ESP32::parseTMtoTimeDate(Diybms_eeprom_settings *_mysettings, struct tm *localRTC)
+{
+    char tempBuff[12] = {0};
+    itoa(localRTC->tm_hour, tempBuff, DEC);
+    _mysettings->setTime[0] = tempBuff[0];
+    _mysettings->setTime[1] = tempBuff[1];
+    _mysettings->setTime[2] = ':';
+    itoa(localRTC->tm_min, tempBuff, DEC);
+    _mysettings->setTime[3] = tempBuff[0];
+    _mysettings->setTime[4] = tempBuff[1];
+    _mysettings->setTime[5] = '\0';
+    // copy hours to uint
+    itoa(localRTC->tm_year, tempBuff, DEC);
+    _mysettings->setDate[0] = tempBuff[0];
+    _mysettings->setDate[1] = tempBuff[1];
+    _mysettings->setDate[2] = tempBuff[2];
+    _mysettings->setDate[3] = tempBuff[3];
+    _mysettings->setDate[4] = '-';
+    itoa(localRTC->tm_mon, tempBuff, DEC);
+    if (localRTC->tm_mon < 10)
+    {
+        _mysettings->setDate[5] = '0';
+        _mysettings->setDate[6] = tempBuff[0];
+    }
+    else
+    {
+        _mysettings->setDate[5] = tempBuff[0];
+        _mysettings->setDate[6] = tempBuff[1];
+    }
+    _mysettings->setDate[7] = '-';
+    itoa(localRTC->tm_mday, tempBuff, DEC);
+    if (localRTC->tm_mday < 10)
+    {
+        _mysettings->setDate[8] = '0';
+        _mysettings->setDate[9] = tempBuff[0];
+    }
+    else
+    {
+        _mysettings->setDate[8] = tempBuff[0];
+        _mysettings->setDate[9] = tempBuff[1];
+    }
+    _mysettings->setDate[10] = '\0';
+    ESP_LOGI(TAG, "parseTMtoTimeDate in mysettings read from DS3231 Time is %s ; Date is: %s ; tempBuff: %s \n",_mysettings->setTime, _mysettings->setDate, tempBuff);
+}
+
+// write Time to DS3231 RTC
+// gets time.h structure with time/date as parameter
+void HAL_ESP32::writeDS3231_RTC(struct tm *localRTC) // write Time to DS3231 RTC
+{
+    // Get Time from DS3231 RTC
+    esp_err_t ret = -1;
+
+    // write from time.h struct to data array and write to DS3231 time registers
+    uint8_t data_wr[8] = {0};
+    data_wr[0] = Uint8ToBcd(localRTC->tm_sec);  // seconds 0 - 60
+    data_wr[1] = Uint8ToBcd(localRTC->tm_min);  // minutes 0 - 60
+    data_wr[2] = Uint8ToBcd(localRTC->tm_hour); // hours values 00 - 23;    set 12h bit 6 with b0100 0000 = 0x40  | DS3231_12HOUR_FLAG
+    data_wr[3] = Uint8ToBcd(1) + 1;             // weekday, input 0 - 6 ; DS3231 accepts  1 - 7;
+    data_wr[4] = Uint8ToBcd(localRTC->tm_mday); // mday 0 - 31
+    // calculate the century flag
+    uint8_t year = localRTC->tm_year - 2000; // to calculate century flag - actual year to set minus 2000
+    data_wr[6] = Uint8ToBcd(year);           // year 00 - 99; if century rolls over set century flag
+    uint8_t centuryFlag = 0;
+    if (year >= 100)
+    {
+        year -= 100;
+        centuryFlag = _BV(7);
+    }
+    data_wr[5] = (Uint8ToBcd(localRTC->tm_mon) | centuryFlag); // month 01 - 12;  bit 7 is century bit
+    // now write the time date write buffer to DS3231
+    ret = setRegDS3231(I2C_NUM_0, DS3231_REG_TIMEDATE, 1, data_wr, DS3231_REG_TIMEDATE_SIZE);
+}
+
+// read Time from DS3231 RTC
+void HAL_ESP32::readDS3231_RTC(struct tm *localRTC)
+{
+    // Get Time from DS3231 RTC
+    uint8_t data_rd[8] = {0};
+    esp_err_t ret = -1;
+    // read the DS3231 time date register
+    ret = readRegDS3231(I2C_NUM_0, DS3231_ADDRESS, DS3231_REG_TIMEDATE, data_rd, DS3231_REG_TIMEDATE_SIZE);
+    // ESP_LOGD(TAG, "readRegDS3231 ESP_OK = 0, I2C reply %i", ret);
+    // ESP_LOGI(TAG, "DS3231 data_rd bytes raw: sec %d min %d hour %d wday %d ", data_rd[0], data_rd[1], data_rd[2], data_rd[3]);
+    //  fill the buffer with what was read; convert to unix time structure
+
+    localRTC->tm_sec = BcdToUint8(data_rd[0] & 0x7F); // seconds  & 0x7F);
+    localRTC->tm_min = BcdToUint8(data_rd[1] & 0x7F); // minutes
+    localRTC->tm_hour = 0;
+    if (data_rd[2] & DS3231_12HOUR_FLAG)
+    {
+        /* 12H */
+        localRTC->tm_hour = BcdToUint8(data_rd[2] & DS3231_12HOUR_MASK); //  - 1; warum -1 ??
+        /* AM/PM? */
+        if (data_rd[2] & DS3231_PM_FLAG)
+            localRTC->tm_hour += 12; // To Do this is not showing PM or AM, just converts to 24h format
+    }
+    else
+        localRTC->tm_hour = BcdToUint8(data_rd[2] & DS3231_24HOUR_MASK); /* 24H */
+
+    localRTC->tm_wday = BcdToUint8(data_rd[3] & 0x07) - 1; // warum  - 1 ?, weil wir 0 - 6 benutzen und DS3231 1 - 7 speichert;
+    localRTC->tm_mday = BcdToUint8(data_rd[4] & 0x3F);
+    uint8_t monthRaw = data_rd[5];
+    localRTC->tm_year = BcdToUint8(data_rd[6]) + 2000;
+    uint8_t isdst = 0; // timezone
+    // localRTC.__TM_ZONE = timezone
+
+    // calculate the century flag
+    uint8_t year = localRTC->tm_year - 2000; // to calculate century flag - actual year to set minus 2000
+
+    if (monthRaw & _BV(7)) // century wrap flag
+    {
+        year += 100;
+    }
+    localRTC->tm_mon = BcdToUint8(monthRaw & 0x7f);
+
+    // apply a time zone (if you are not using localtime on the rtc or you want to check/apply DST)
+    // applyTZ(time);
+
+    ESP_LOGI(TAG, "direct DS3231 read time: sec:%d min:%d hour:%d wday:%d mday:%d month:%d year:%d", localRTC->tm_sec, localRTC->tm_min, localRTC->tm_hour, localRTC->tm_wday, localRTC->tm_mday, localRTC->tm_mon, localRTC->tm_year);
+
+    // setTime(30, 24, 15, 17, 1, 2021);  // 17th Jan 2021 15:24:30  ; set ESP32 rtc timer
+    //  setTime(second, minute, hour, mday, month, year_rd);  // 17th Jan 2021 15:24:30
+
+} // end readDS3231_RTC
+
+uint8_t HAL_ESP32::BcdToUint8(uint8_t val)
+{
+    return (val >> 4) * 10 + (val & 0x0F);
+}
+
+uint8_t HAL_ESP32::Uint8ToBcd(uint8_t val)
+{
+    return ((val / 10) << 4) + (val % 10);
+}
+// read a register
+esp_err_t HAL_ESP32::readRegDS3231(i2c_port_t i2c_num, uint8_t chip_addr, uint8_t Reg_Adr, uint8_t *data_rd, size_t num_bytes)
+{
+    esp_err_t ret = ESP_OK;
+    if (Geti2cMutex())
+    {
+        int i = 0;
+        if (num_bytes == 0)
+        {
+            return ESP_OK;
+        }
+        // first access the ic
+        i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+        i2c_master_start(cmd);
+        //--
+        if (chip_addr != -1)
+        {
+            i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_WRITE, I2C_MASTER_ACK);
+            i2c_master_write_byte(cmd, Reg_Adr, I2C_MASTER_ACK);
+            i2c_master_start(cmd);
+        }
+        //--
+        i2c_master_write_byte(cmd, chip_addr << 1 | I2C_MASTER_READ, I2C_MASTER_ACK);
+        /*      if (num_bytes > 1)
+                {
+                    ret = i2c_master_read(cmd, data_rd, num_bytes - 1, I2C_MASTER_ACK);
+
+                    ESP_LOGD(TAG, "readRegDS3231 data_rd ESP_OK = 0, I2C reply %i", ret);
+                }
+                // ret = i2c_master_read(cmd, data_rd, num_bytes, I2C_MASTER_LAST_NACK);
+                ret = i2c_master_read_byte(cmd, data_rd + num_bytes - 1, I2C_MASTER_NACK); */
+        ret = i2c_master_read(cmd, data_rd, num_bytes, I2C_MASTER_LAST_NACK);
+        // ESP_LOGD(TAG, "readRegDS3231 data_rd ESP_OK = 0, I2C reply %i", ret);
+        i2c_master_stop(cmd);
+        ret = i2c_master_cmd_begin(i2c_num, cmd, pdMS_TO_TICKS(CONFIG_I2CDEV_TIMEOUT)); // 1000 / portTICK_RATE_MS);
+        if (ret != ESP_OK)
+            ESP_LOGE(TAG, "Could not read from device [0x%02x at %d]: %d", DS3231_ADDRESS, i2c_num, ret);
+        i2c_cmd_link_delete(cmd);
+        Releasei2cMutex();
+    }
+    return ret;
+}
+// set a register
+esp_err_t HAL_ESP32::setRegDS3231(i2c_port_t i2c_num, uint8_t *Reg_Adr, size_t out_reg_size, uint8_t *data_rd, size_t num_bytes)
+{
+    esp_err_t ret = ESP_OK;
+    if (Geti2cMutex())
+    {
+        int i = 0;
+        if (num_bytes == 0)
+        {
+            return ESP_OK;
+        }
+        // first access the ic
+        i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+        i2c_master_start(cmd);
+        i2c_master_write_byte(cmd, DS3231_ADDRESS << 1, I2C_MASTER_ACK);
+        i2c_master_write_byte(cmd, DS3231_REG_TIMEDATE, I2C_MASTER_ACK);
+        i2c_master_write(cmd, data_rd, num_bytes, I2C_MASTER_NACK);
+        i2c_master_stop(cmd);
+        ret = i2c_master_cmd_begin(i2c_num, cmd, pdMS_TO_TICKS(CONFIG_I2CDEV_TIMEOUT)); // 1000 / portTICK_RATE_MS);
+        if (ret != ESP_OK)
+            ESP_LOGE(TAG, "Could not read from device [0x%02x at %d]: %d", Reg_Adr, i2c_num, ret);
+        i2c_cmd_link_delete(cmd);
+        Releasei2cMutex();
+    }
+    return ret;
+}

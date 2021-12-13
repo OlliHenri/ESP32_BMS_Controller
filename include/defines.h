@@ -102,7 +102,7 @@ enum RelayType : uint8_t
 #define SHOW_TIME_PERIOD 5000
 #define NTP_TIMEOUT 1500
 
-struct diybms_eeprom_settings
+typedef struct diybms_eeprom_settings
 {
   uint8_t totalNumberOfBanks;
   uint8_t totalNumberOfSeriesModules;
@@ -163,7 +163,7 @@ struct diybms_eeprom_settings
   char influxdb_databasebucket[64 + 1];
   char influxdb_apitoken[128 + 1];
   char influxdb_orgid[128 + 1];
-};
+}Diybms_eeprom_settings;
 
 typedef union
 {
