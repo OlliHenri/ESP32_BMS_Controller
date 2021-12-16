@@ -2,6 +2,18 @@
 #include "defines.h"
 #include "HAL_ESP32.h"
 
+// DS3231 RTC
+const uint16_t c_OriginYear = 2000;
+const uint32_t c_Epoch32OfOriginYear = 946684800; // Saturday, 1. January 2000 00:00:00
+const uint8_t c_daysInMonth[] PROGMEM = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+uint16_t e_yearFrom2000;
+uint8_t e_month;
+uint8_t e_dayOfMonth;
+uint8_t e_hour;
+uint8_t e_minute;
+uint8_t e_second;
+
+
 uint8_t HAL_ESP32::readBytePCF8574(i2c_port_t i2c_num, uint8_t dev)
 {
     // We use the native i2c commands for ESP32 as the Arduino library
@@ -736,4 +748,56 @@ esp_err_t HAL_ESP32::setRegDS3231(i2c_port_t i2c_num, uint8_t *Reg_Adr, size_t o
         Releasei2cMutex();
     }
     return ret;
+}
+
+// init the time.h structure for epoch time calculation
+void HAL_ESP32::init_with_tm(struct tm *localRTC)
+{
+
+    e_yearFrom2000 = (localRTC->tm_year >= c_OriginYear) ? localRTC->tm_year - c_OriginYear : localRTC->tm_year;
+    e_month = localRTC->tm_mon;
+    e_dayOfMonth = localRTC->tm_mday;
+    e_hour = localRTC->tm_hour;
+    e_minute = localRTC->tm_min;
+    e_second = localRTC->tm_sec;
+}
+
+template <typename T>
+T DaysSinceFirstOfYear2000(uint16_t year, uint8_t month, uint8_t dayOfMonth)
+{
+    T days = dayOfMonth;
+    for (uint8_t indexMonth = 1; indexMonth < month; ++indexMonth)
+    {
+        days += pgm_read_byte(c_daysInMonth + indexMonth - 1);
+    }
+    if (month > 2 && year % 4 == 0)
+    {
+        days++;
+    }
+    return days + 365 * year + (year + 3) / 4 - 1;
+}
+
+template <typename T>
+T SecondsIn(T days, uint8_t hours, uint8_t minutes, uint8_t seconds)
+{
+    return ((days * 24L + hours) * 60 + minutes) * 60 + seconds;
+}
+
+uint8_t HAL_ESP32::DayOfWeek()
+{
+    uint16_t days = DaysSinceFirstOfYear2000<uint16_t>(e_yearFrom2000,  e_month,  e_dayOfMonth);
+    return (days + 6) % 7; // Jan 1, 2000 is a Saturday, i.e. returns 6
+}
+
+// 32-bit time; as seconds since 1/1/2000
+uint32_t HAL_ESP32::TotalSeconds()
+{
+    uint16_t days = DaysSinceFirstOfYear2000<uint16_t>(e_yearFrom2000,  e_month,  e_dayOfMonth);
+    return SecondsIn<uint32_t>(days, e_hour, e_minute, e_second);
+}
+
+// Epoch32 support
+uint32_t HAL_ESP32::Epoch32Time()
+{
+    return TotalSeconds() + c_Epoch32OfOriginYear;
 }

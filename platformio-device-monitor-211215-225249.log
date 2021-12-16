@@ -1,0 +1,1749 @@
+ets Jun  8 2016 00:22:57
+
+rst:0x1 (POWERON_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DOUT, clock div:2
+load:0x3fff0018,len:4
+load:0x3fff001c,len:1044
+load:0x40078000,len:10124
+load:0x40080400,len:5828
+entry 0x400806a8
+�
+
+
+                _          __ 
+    _|  o      |_)  |\/|  (_  
+   (_|  |  \/  |_)  |  |  __) 
+           /                  
+[I][main.cpp:3497] setup(): CONTROLLER - ver:LocalCompile compiled 2021-12-16T02:51:51.487Z
+[I][main.cpp:3502] setup(): ESP32 Chip model = 1, Rev 1, Cores=2, Features=50
+[I][HAL_ESP32.cpp:367] ConfigureI2C(): Configure I2C
+[I][HAL_ESP32.cpp:389] ConfigureI2C(): Config i2c passed
+[I][HAL_ESP32.cpp:333] test4i2cDevice(): Test I2C for device: 104
+[D][HAL_ESP32.cpp:334] test4i2cDevice(): ESP_OK = 0, I2C reply 0
+[D][HAL_ESP32.cpp:398] ConfigureI2C(): DS3231 ESP_OK = 0, DS3231 found 
+[I][HAL_ESP32.cpp:333] test4i2cDevice(): Test I2C for device: 32
+[D][HAL_ESP32.cpp:334] test4i2cDevice(): ESP_OK = 0, I2C reply 0
+[I][HAL_ESP32.cpp:433] ConfigureI2C(): wrote INPUT MASK at PCF8574A
+[I][HAL_ESP32.cpp:448] ConfigureI2C(): PCF8574A read value: 128
+[I][HAL_ESP32.cpp:450] ConfigureI2C(): PCF8574A read value: 128
+[D][HAL_ESP32.cpp:451] ConfigureI2C(): ESP_OK = 0, I2C reply 0
+[I][HAL_ESP32.cpp:333] test4i2cDevice(): Test I2C for device: 61
+[D][HAL_ESP32.cpp:334] test4i2cDevice(): ESP_OK = 0, I2C reply -1
+[E][HAL_ESP32.cpp:488] ConfigureI2C(): PCF8574B Error not found
+[I][HAL_ESP32.cpp:668] readDS3231_RTC(): direct DS3231 read time: sec:12 min:52 hour:22 wday:5 mday:15 month:12 year:2021
+[I][HAL_ESP32.cpp:592] parseTMtoTimeDate(): parseTMtoTimeDate in mysettings read from DS3231 Time is 22:52 ; Date is: 2021-12-15 ; tempBuff: 15 
+
+[D][HAL_ESP32.h:369] TouchScreenUpdate(): Touch = touch=0 pressure=0 x=0 y=0
+[I][main.cpp:3536] setup(): TFT screen is NOT installed
+[I][main.cpp:1104] SetControllerState(): ** Controller changed state from Unknown to PowerUp **
+[I][main.cpp:3551] setup(): LITTLEFS mounted, totalBytes=2031616, usedBytes=12288
+[D][main.cpp:3553] setup(): Olli LittleFS was mounted.....
+[I][main.cpp:253] mountSDCard(): Mounting SD card
+[W][sd_diskio.cpp:101] sdWait(): Wait Failed
+[E][sd_diskio.cpp:123] sdSelectCard(): Select Failed
+[W][sd_diskio.cpp:505] ff_sd_initialize(): GO_IDLE_STATE failed
+[E][sd_diskio.cpp:775] sdcard_mount(): f_mount failed: (3) The physical drive cannot work
+[W][sd_diskio.cpp:101] sdWait(): Wait Failed
+[E][sd_diskio.cpp:123] sdSelectCard(): Select Failed
+[E][main.cpp:272] mountSDCard(): Card Mount Failed
+ESP_ERROR_CHECK_WITHOUT_ABORT failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x4009129f
+file: "src/HAL_ESP32.cpp" line 255
+func: void HAL_ESP32::CANBUSEnable(bool)
+expression: writeBytePCF8574(I2C_NUM_0, PCF8574B_ADDRESS, PCF8574A_Value)
+[I][HAL_ESP32.cpp:222] ConfigureCAN(): CAN driver installed.  Filter=1621098496 Mask=6291455
+[I][HAL_ESP32.cpp:232] ConfigureCAN(): CAN driver started
+[D][settings.cpp:20] ReadConfig(): ReadConfig diybms
+[D][settings.cpp:42] ReadConfig(): checksum verified
+[I][main.cpp:3576] setup(): 
+[D][main.cpp:212] SetupRS485(): Setup RS485
+[D][main.cpp:199] ConfigureRS485(): Configure RS485
+Press SPACE BAR to enter terminal based configuration........................skipped
+[D][settings.cpp:20] ReadConfig(): ReadConfig diybmswifi
+[D][settings.cpp:42] ReadConfig(): checksum verified
+[I][main.cpp:1104] SetControllerState(): ** Controller changed state from PowerUp to Stabilizing **
+ESP_ERROR_CHECK_WITHOUT_ABORT failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x4009129f
+file: "src/HAL_ESP32.cpp" line 271
+func: void HAL_ESP32::TFTScreenBacklight(bool)
+expression: writeBytePCF8574(I2C_NUM_0, PCF8574B_ADDRESS, PCF8574B_Value)
+[D][WiFiGeneric.cpp:374] _eventCallback(): Event: 0 - WIFI_READY
+[D][WiFiGeneric.cpp:374] _eventCallback(): Event: 2 - STA_START
+[I][main.cpp:1597] connectToWifi(): Hostname: DIYBMS-009DEF84, current state 255
+[D][WiFiGeneric.cpp:374] _eventCallback(): Event: 4 - STA_CONNECTED
+[D][WiFiGeneric.cpp:374] _eventCallback(): Event: 7 - STA_GOT_IP
+[D][WiFiGeneric.cpp:419] _eventCallback(): STA IP: 192.168.86.134, MASK: 255.255.255.0, GW: 192.168.86.1
+[I][main.cpp:1680] onWifiConnect(): Wi-Fi status=3
+[I][main.cpp:1682] onWifiConnect(): Request NTP from time.google.com
+[I][HAL_ESP32.cpp:668] readDS3231_RTC(): direct DS3231 read time: sec:21 min:52 hour:22 wday:5 mday:15 month:12 year:2021
+[I][HAL_ESP32.cpp:592] parseTMtoTimeDate(): parseTMtoTimeDate in mysettings read from DS3231 Time is 22:52 ; Date is: 2021-12-15 ; tempBuff: 15 
+
+[I][main.cpp:1687] onWifiConnect(): direct DS3231 read time: sec:21 min:52 hour:22 wday:5 mday:15 month:12 year:2021
+[I][main.cpp:1691] onWifiConnect(): EpochTime of tm is: 1639608741
+[I][main.cpp:1694] onWifiConnect(): epoch time is : 1639608741
+[I][main.cpp:1707] onWifiConnect(): The internal ESP local date and time is: Wed Dec 15 22:52:21 2021
+
+Wednesday, December 15 2021 22:52:21
+[I][DIYBMSServer.cpp:2611] StartServer(): Start Web Server complete
+[I][ArduinoOTA.cpp:141] begin(): OTA server at: DIYBMS-009DEF84.local:3232
+[I][main.cpp:1741] onWifiConnect(): mDNS responder started
+[I][main.cpp:1746] onWifiConnect(): You can access DIYBMS interface at http://DIYBMS-009DEF84.local or http://192.168.86.134
+*OK*
+[I][Rules.cpp:142] SetError(): Set error 4
+[I][Rules.cpp:142] SetError(): Set error 4
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[I][main.cpp:1104] SetControllerState(): ** Controller changed state from Stabilizing to Running **
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*
+[D][PacketReceiveProcessor.cpp:72] ProcessReply(): Updated volt status cells 0 to 3
+*OK*
+*OK*

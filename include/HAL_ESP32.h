@@ -61,6 +61,18 @@ PCB WITH RS485/CANBUS/TFT DISPLAY
 #define RS485_ENABLE GPIO_NUM_25
 
 // RTC DS3231
+// RTC DS3231
+enum DayOfWeek
+{
+    DayOfWeek_Sunday = 0,
+    DayOfWeek_Monday,
+    DayOfWeek_Tuesday,
+    DayOfWeek_Wednesday,
+    DayOfWeek_Thursday,
+    DayOfWeek_Friday,
+    DayOfWeek_Saturday,
+};
+
 // I2C Slave Address
 #define DS3231_ADDRESS 0x68
 
@@ -140,6 +152,10 @@ public:
     void parseTimeDateToTM(Diybms_eeprom_settings *_mysettings,  struct tm *localRTC);
     void parseTMtoTimeDate(Diybms_eeprom_settings *_mysettings, struct tm *localRTC);
     void setTimeDateMan(Diybms_eeprom_settings *_mysettings,  struct tm *localRTC);
+    void init_with_tm(struct tm *localRTC);
+    uint8_t DayOfWeek();
+    uint32_t TotalSeconds();
+    uint32_t Epoch32Time();
 
     void Led(uint8_t bits);
     void ConfigurePins(void (*WiFiPasswordResetInterrput)(void));

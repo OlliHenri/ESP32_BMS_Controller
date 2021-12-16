@@ -1681,6 +1681,31 @@ void onWifiConnect(WiFiEvent_t event, WiFiEventInfo_t info)
 
   ESP_LOGI(TAG, "Request NTP from %s", mysettings.ntpServer);
 
+  // read DS3231 RTC chip and set time in mysettings
+  hal.readDS3231_RTC(&My_localRTC);                 // read time from DS3231
+  hal.parseTMtoTimeDate(&mysettings, &My_localRTC); // write the time coming from DS3231 to mysettings structure
+  ESP_LOGI(TAG, "direct DS3231 read time: sec:%d min:%d hour:%d wday:%d mday:%d month:%d year:%d", My_localRTC.tm_sec, My_localRTC.tm_min, My_localRTC.tm_hour, My_localRTC.tm_wday, My_localRTC.tm_mday, My_localRTC.tm_mon, My_localRTC.tm_year);
+  // now set ESP32 internal time
+  hal.init_with_tm(&My_localRTC);
+  uint32_t mylong = hal.Epoch32Time();
+  ESP_LOGI(TAG, "EpochTime of tm is: %d", mylong);
+  time_t t = mylong;
+
+  ESP_LOGI(TAG, "epoch time is : %d", t);
+  // ESP_LOGI(TAG, "Setting internal ESP time: %s", asctime(&My_localRTC));  // asctime() is undefined bcs the year has to be based from 1900
+
+  struct timeval now = {.tv_sec = t};
+
+  settimeofday(&now, NULL);
+  // and now test if time in ESP was set
+  time_t now1 = time(0);
+
+  // Convert now to tm struct for local timezone
+
+  tm *localtm = localtime(&now1);
+
+  ESP_LOGI(TAG, "The internal ESP local date and time is: %s", asctime(localtm));
+  // overwrite time in mysettings if NTP timeserver is available, would probably be better if we set time in RTC if timeserver is available and use always RTC to set local time
   // Use native ESP32 code
   configTime(mysettings.timeZone * 3600 + mysettings.minutesTimeZone * 60, mysettings.daylight * 3600, mysettings.ntpServer);
 
